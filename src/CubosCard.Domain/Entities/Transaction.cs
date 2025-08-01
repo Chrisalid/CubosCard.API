@@ -9,8 +9,6 @@ public class Transaction : BaseEntity
     public decimal Value { get; set; }
 
     public string Description { get; set; }
-
-    public virtual Person Person { get; set; }
     public virtual Account Account { get; set; }
 
     public static Transaction Create(TransactionModel model)

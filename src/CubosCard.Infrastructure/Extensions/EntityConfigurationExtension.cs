@@ -8,19 +8,18 @@ public static class EntityConfigurationExtension
     public static EntityTypeBuilder SetPropertyCommums(this EntityTypeBuilder builder)
     {
         builder.Property("CreatedAt")
-            .HasColumnName("CreatedAt")
+            .HasColumnName("created_at")
             .HasColumnType("timestamp(6)")
             .IsRequired();
 
         builder.Property("UpdatedAt")
-                .HasColumnName("UpdatedAt")
+                .HasColumnName("updated_at")
                 .HasColumnType("timestamp(6)")
                 .HasDefaultValue(null);
 
         builder.Property("DeletedAt")
-                .HasColumnName("DeletedAt")
-                .HasColumnType("timestamp(6)")
-                .IsRequired();
+                .HasColumnName("deleted_at")
+                .HasColumnType("timestamp(6)");
         
         return builder;
     }

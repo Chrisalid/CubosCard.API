@@ -75,6 +75,10 @@ public class PersonService : IPersonService
             if (person is null || !BCrypt.Net.BCrypt.Verify(model.Password, person.Password))
                 return null;
 
+            var tokenNotExpired = await _authTokenRepository.GetByPersonId(person.Id);
+            if (tokenNotExpired is not null)
+                return new LoginResponse { Token = tokenNotExpired.Token };
+
             var token = GenerateJwtToken(person, out DateTime expiresAt);
 
             var authToken = Create(new AuthTokenModel(

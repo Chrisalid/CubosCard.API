@@ -12,8 +12,6 @@ public class Person : BaseEntity
 
     public virtual ICollection<Account> Accounts { get; set; }
     public virtual ICollection<AuthToken> AuthTokens { get; set; }
-    public virtual ICollection<Card> Cards { get; set; }
-    public virtual ICollection<Transaction> Transactions { get; set; }
 
     public static Person Create(PersonModel model)
     {

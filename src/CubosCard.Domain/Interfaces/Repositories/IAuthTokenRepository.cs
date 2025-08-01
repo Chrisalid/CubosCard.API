@@ -1,5 +1,8 @@
-using System;
+using CubosCard.Domain.Entities;
 
 namespace CubosCard.Domain.Interfaces.Repositories;
 
-public interface IAuthTokenRepository : IUnitOfWorkRepository { }
+public interface IAuthTokenRepository : IUnitOfWorkRepository
+{
+    Task<AuthToken> GetByPersonId(Guid personId);
+}

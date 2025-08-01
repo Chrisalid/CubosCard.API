@@ -15,8 +15,6 @@ public class Card : BaseEntity
 
     public CardType CardType { get; set; }
 
-    public virtual Person Person { get; set; }
-
     public virtual Account Account { get; set; }
 
     public virtual ICollection<Transaction> Transactions { get; set; }

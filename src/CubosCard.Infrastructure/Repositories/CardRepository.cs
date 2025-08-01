@@ -1,5 +1,4 @@
 using CubosCard.Domain.Entities;
-using CubosCard.Domain.Enums;
 using CubosCard.Domain.Interfaces.Repositories;
 using CubosCard.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
