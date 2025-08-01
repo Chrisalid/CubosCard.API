@@ -9,6 +9,8 @@ public class PersonConfiguration : IEntityTypeConfiguration<Person>
 {
     public void Configure(EntityTypeBuilder<Person> builder)
     {
+        builder.ToTable("Person");
+
         builder.HasKey(p => p.Id);
 
         builder.Property(p => p.Name)

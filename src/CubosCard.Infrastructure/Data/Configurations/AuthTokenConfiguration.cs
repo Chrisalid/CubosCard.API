@@ -8,6 +8,8 @@ public class AuthTokenConfiguration : IEntityTypeConfiguration<AuthToken>
 {
     public void Configure(EntityTypeBuilder<AuthToken> builder)
     {
+        builder.ToTable("AuthToken");
+
         builder.HasKey(at => at.Id);
 
         builder.Property(at => at.PersonId)

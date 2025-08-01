@@ -9,6 +9,8 @@ public class CardConfiguration : IEntityTypeConfiguration<Card>
 {
     public void Configure(EntityTypeBuilder<Card> builder)
     {
+        builder.ToTable("Card");
+
         builder.HasKey(c => c.Id);
 
         builder.Property(c => c.AccountId)
