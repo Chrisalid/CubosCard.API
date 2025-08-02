@@ -14,9 +14,6 @@ public class LoginController(IPersonService personService) : BaseController
     {
         try
         {
-            if (TryValidateModel(jsonLoginRequest))
-                throw new ArgumentException("Model is invalid check Model Parameter's", nameof(LoginRequest));
-
             var loginResponse = await _personService.LoginAsync(jsonLoginRequest);
 
             return loginResponse is not null && !string.IsNullOrWhiteSpace(loginResponse.Token)
