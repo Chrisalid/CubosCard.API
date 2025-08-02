@@ -4,7 +4,9 @@ using System.Text;
 using CubosCard.Application.DTOs;
 using CubosCard.Application.Interfaces.Services;
 using CubosCard.Domain.Entities;
+using CubosCard.Domain.Enums;
 using CubosCard.Domain.Interfaces.Repositories;
+using CubosCard.External.API.Interfaces.Services;
 using CubosCard.Infrastructure.Utility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -13,20 +15,26 @@ using static CubosCard.Domain.Entities.Person;
 
 namespace CubosCard.Application.Services;
 
-public class PersonService : IPersonService
+public class PersonService(
+    IPersonRepository personRepository,
+    IAuthTokenRepository authTokenRepository,
+    IExternalAuthenticationRepository externalAuthenticationRepository,
+    IExternalAuthenticationTokenRepository externalAuthenticationTokenRepository,
+    ICubosComplianceApiService cubosComplianceApiService,
+    IConfiguration configuration
+) : IPersonService
 {
-    private readonly IPersonRepository _personRepository;
+    private readonly IPersonRepository _personRepository = personRepository;
 
-    private readonly IAuthTokenRepository _authTokenRepository;
+    private readonly IAuthTokenRepository _authTokenRepository = authTokenRepository;
 
-    private readonly IConfiguration _configuration;
+    private readonly IExternalAuthenticationRepository _externalAuthenticationRepository = externalAuthenticationRepository;
 
-    public PersonService(IPersonRepository personRepository, IAuthTokenRepository authTokenRepository, IConfiguration configuration)
-    {
-        _personRepository = personRepository;
-        _authTokenRepository = authTokenRepository;
-        _configuration = configuration;
-    }
+    private readonly IExternalAuthenticationTokenRepository _externalAuthenticationTokenRepository = externalAuthenticationTokenRepository;
+
+    private readonly ICubosComplianceApiService _cubosComplianceApiService = cubosComplianceApiService;
+
+    private readonly IConfiguration _configuration = configuration;
 
     public async Task<PersonResponse> CreateAsync(PersonModel model)
     {
@@ -36,6 +44,9 @@ public class PersonService : IPersonService
                 throw new ArgumentException("Document cannot be null or empty.", nameof(PersonModel));
 
             var document = Utils.NormalizeString(model.Document);
+
+            if (!await VerifyCpfAndCpnjIsValid(document))
+                throw new ArgumentException("Invalid document!", nameof(document));
 
             var existingPerson = await _personRepository.GetByDocument(document);
             if (existingPerson != null)
@@ -119,6 +130,29 @@ public class PersonService : IPersonService
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
+        }
+        catch { throw; }
+    }
+
+    public async Task<bool> VerifyCpfAndCpnjIsValid(string document)
+    {
+        try
+        {
+            var externalAuthentication = await _externalAuthenticationRepository.GetByType(CubosApiType.Compliance)
+                ?? throw new ArgumentException("ExternalAuthentication not found!", nameof(VerifyCpfAndCpnjIsValid));
+
+            var externalAuthenticationToken = await _externalAuthenticationTokenRepository.GetByExternalAuthenticationId(externalAuthentication.Id);
+            if (externalAuthenticationToken is null)
+            {
+                externalAuthentication = await _cubosComplianceApiService.AuthCode(externalAuthentication);
+                externalAuthenticationToken = await _cubosComplianceApiService.AuthToken(externalAuthentication);
+            }
+            else
+                externalAuthenticationToken = await _cubosComplianceApiService.AuthRefresh(externalAuthenticationToken);
+
+            return document.Length == 11
+                ? await _cubosComplianceApiService.CpfValidate(externalAuthenticationToken, document)
+                : await _cubosComplianceApiService.CnpjValidate(externalAuthenticationToken, document);
         }
         catch { throw; }
     }

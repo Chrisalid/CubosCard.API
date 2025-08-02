@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using CubosCard.API.Extensions;
 using CubosCard.API.Middlewares;
-using CubosCard.Application.Extensions;
+using CubosCard.IoC.Extensions;
 using CubosCard.Infrastructure.Data;
 using CubosCard.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;

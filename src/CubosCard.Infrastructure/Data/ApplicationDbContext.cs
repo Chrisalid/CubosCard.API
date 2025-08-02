@@ -14,13 +14,19 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
     public DbSet<Card> Card { get; set; }
 
+    public DbSet<Transaction> Transaction { get; set; }
+
+    public DbSet<ExternalAuthentication> ExternalAuthentication { get; set; }
+
+    public DbSet<ExternalAuthenticationToken> ExternalAuthenticationToken { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        #if DEBUG
+#if DEBUG
         optionsBuilder
             .EnableSensitiveDataLogging()
             .EnableDetailedErrors();
-        #endif
+#endif
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

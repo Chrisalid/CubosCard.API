@@ -19,7 +19,8 @@ public static class EntityConfigurationExtension
 
         builder.Property("DeletedAt")
                 .HasColumnName("deleted_at")
-                .HasColumnType("timestamp(6)");
+                .HasColumnType("timestamp(6)")
+                .HasDefaultValue(null);
         
         return builder;
     }

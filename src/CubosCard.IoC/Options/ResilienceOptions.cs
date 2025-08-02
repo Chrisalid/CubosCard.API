@@ -1,4 +1,4 @@
-namespace CubosCard.Application.Extensions.Options;
+namespace CubosCard.IoC.Extensions.Options;
 
 public class ResilienceOptions
 {

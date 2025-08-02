@@ -21,6 +21,7 @@
     <ProjectReference Include="..\CubosCard.Application\CubosCard.Application.csproj" />
     <ProjectReference Include="..\CubosCard.Domain\CubosCard.Domain.csproj" />
     <ProjectReference Include="..\CubosCard.Infrastructure\CubosCard.Infrastructure.csproj" />
+    <ProjectReference Include="..\CubosCard.IoC\CubosCard.IoC.csproj" />
   </ItemGroup>
 
 </Project>

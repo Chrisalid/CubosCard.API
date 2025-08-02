@@ -24,6 +24,8 @@ public static class InfrastructureSettingsExtension
         .AddScoped<IAccountRepository, AccountRepository>()
         .AddScoped<ICardRepository, CardRepository>()
         .AddScoped<ITransactionRepository, TransactionRepository>()
-        .AddScoped<IAuthTokenRepository, AuthTokenRepository>();
+        .AddScoped<IAuthTokenRepository, AuthTokenRepository>()
+        .AddScoped<IExternalAuthenticationRepository, ExternalAuthenticationRepository>()
+        .AddScoped<IExternalAuthenticationTokenRepository, ExternalAuthenticationTokenRepository>();
     }
 }
