@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using CubosCard.API.Extensions;
+using CubosCard.API.Middlewares;
 using CubosCard.Application.Extensions;
 using CubosCard.Infrastructure.Data;
 using CubosCard.Infrastructure.Extensions;
@@ -10,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .ConfigureDbContext(builder.Configuration)
     .RegisterServices(builder.Configuration)
+    .AddJwtConfiguration(builder.Configuration)
     .AddRepositories()
     .AddApiSettings()
     .AddApiTools()
@@ -32,6 +34,9 @@ app.UseApiSettings()
     .UseRouting();
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<JwtMiddleware>();
+
 app.MapControllers();
 
 using (var scope = app.Services.CreateScope())

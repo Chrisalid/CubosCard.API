@@ -16,7 +16,9 @@ public static class ApplicationSettingsExtension
         services
             .AddScoped<IPersonService, PersonService>()
             .AddScoped<ICardService, CardService>()
-            .AddScoped<IAccountService, AccountService>();
+            .AddScoped<IAccountService, AccountService>()
+            .AddScoped<IAuthTokenService, AuthTokenService>()
+            .AddScoped<ITransactionService, TransactionService>();
 
         // services.ConfigureClientApi(configuration);
 
