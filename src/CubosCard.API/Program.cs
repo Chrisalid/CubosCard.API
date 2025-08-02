@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllers();
+
 builder.Services
     .ConfigureDbContext(builder.Configuration)
     .RegisterServices(builder.Configuration)
@@ -27,15 +29,14 @@ builder.WebHost
 
 var app = builder.Build();
 
+app.UseApiTools(app.Configuration);
+
+app.UseMiddleware<JwtMiddleware>();
+
 app.UseApiSettings()
-    .UseApiTools(app.Configuration)
     .UseResponseCompression()
     .UseExceptionHandler()
     .UseRouting();
-
-app.UseHttpsRedirection();
-
-app.UseMiddleware<JwtMiddleware>();
 
 app.MapControllers();
 

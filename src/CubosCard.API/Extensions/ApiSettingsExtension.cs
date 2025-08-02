@@ -82,7 +82,7 @@ public static class ApiSettingsExtension
         app.UseLoggingMiddleware()
             .UseAuthentication()
             .UseRouting()
-            .UseAuthentication()
+            .UseAuthorization()
             .UseEndpoints(endPoints => { endPoints.MapControllers(); });
 
     public static IServiceCollection AddApiSettings(this IServiceCollection services)
@@ -115,7 +115,8 @@ public static class ApiSettingsExtension
                     });
 
                 c.DocExpansion(DocExpansion.List);
-            });
+            })
+            .UseHttpsRedirection();
     }
 
     public static IServiceCollection ConfigureCompression(this IServiceCollection services)

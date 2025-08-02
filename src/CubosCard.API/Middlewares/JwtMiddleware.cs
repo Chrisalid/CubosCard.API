@@ -7,16 +7,10 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace CubosCard.API.Middlewares;
 
-public class JwtMiddleware
+public class JwtMiddleware(RequestDelegate next, IConfiguration configuration)
 {
-    private readonly RequestDelegate _next;
-    private readonly IConfiguration _configuration;
-
-    public JwtMiddleware(RequestDelegate next, IConfiguration configuration)
-    {
-        _next = next;
-        _configuration = configuration;
-    }
+    private readonly RequestDelegate _next = next;
+    private readonly IConfiguration _configuration = configuration;
 
     public async Task InvokeAsync(HttpContext context, IAuthTokenService authTokenService)
     {
@@ -36,8 +30,7 @@ public class JwtMiddleware
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration["Jwt:SecretKey"] ?? throw new InvalidOperationException("JWT Secret Key not configured"));
-            
-            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            var validationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(key),
@@ -46,21 +39,23 @@ public class JwtMiddleware
                 ValidateAudience = true,
                 ValidAudience = _configuration["Jwt:Audience"],
                 ClockSkew = TimeSpan.Zero
-            }, out SecurityToken validatedToken);
-
-            var jwtToken = (JwtSecurityToken)validatedToken;
-            var userId = jwtToken.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+            };
+            var principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
 
             var isValid = await authTokenService.ValidateTokenAsync(token);
+
             if (isValid)
             {
-                context.Items["User"] = userId;
-                context.Items["Token"] = token;
+                var personIdClaim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier || c.Type == "sub");
+                if (personIdClaim != null)
+                {
+                    context.Items["User"] = personIdClaim.Value;
+                }
             }
         }
         catch
         {
-            // Token inválido - não anexar nada ao contexto
+            // Não faz nada, usuário não autenticado
         }
     }
 }
