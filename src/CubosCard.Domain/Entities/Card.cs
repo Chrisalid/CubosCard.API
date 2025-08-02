@@ -17,8 +17,6 @@ public class Card : BaseEntity
 
     public virtual Account Account { get; set; }
 
-    public virtual ICollection<Transaction> Transactions { get; set; }
-
     public static Card Create(CardModel model)
     {
         try
