@@ -6,17 +6,17 @@ namespace CubosCard.External.API;
 public interface ICubosComplianceApiRequest
 {
     [Post("/auth/code")]
-    Task<JsonResultExternalApi> AuthCode(string email, string password);
+    Task<JsonResultExternalApi> AuthCode([Body] JsonAuthCodeResquest jsonAuthCodeResquest);
 
     [Post("/auth/token")]
-    Task<JsonResultExternalApi> AuthToken(string code);
+    Task<JsonResultExternalApi> AuthToken([Body] JsonAuthRequestToken jsonAuthRequestToken);
 
     [Post("/auth/refresh")]
-    Task<JsonResultExternalApi> AuthRefresh([Header("Authorization")] string token, string refreshToken);
+    Task<JsonResultExternalApi> AuthRefresh([Header("Authorization")] string token, [Body] JsonAuthRefreshRequest jsonAuthRefreshRequest);
 
     [Post("/cpf/validate")]
-    Task<JsonResultExternalApi> CpfValidate([Header("Authorization")] string token, string socialSecurity);
+    Task<JsonResultExternalValidationApi> CpfValidate([Header("Authorization")] string token, [Body] JsonDocumentValitate jsonDocumentValitate);
 
     [Post("/cnpj/validate")]
-    Task<JsonResultExternalApi> CnpjValidate([Header("Authorization")] string token, string taxNumber);
+    Task<JsonResultExternalValidationApi> CnpjValidate([Header("Authorization")] string token, [Body] JsonDocumentValitate jsonDocumentValitate);
 }

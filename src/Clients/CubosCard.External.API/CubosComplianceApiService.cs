@@ -12,10 +12,16 @@ public class CubosComplianceApiService(ICubosComplianceApiRequest api, IUnitOfWo
     {
         try
         {
-            var jsonReturn = await api.AuthCode(externalAuthentication.Email, externalAuthentication.Password);
+            var jsonAuthRequestToken = new JsonAuthCodeResquest
+            {
+                Email = externalAuthentication.Email,
+                Password = externalAuthentication.Password
+            };
+
+            var jsonReturn = await api.AuthCode(jsonAuthRequestToken);
 
             string authCode = jsonReturn.Success.HasValue && jsonReturn.Success.Value
-                ? jsonReturn.Data.AuthCode : null;
+                ? jsonReturn.Data.GetProperty("authCode").GetString() : null;
 
             if (string.IsNullOrWhiteSpace(authCode))
                 throw new ArgumentException(jsonReturn.Error, nameof(AuthCode));
@@ -34,14 +40,15 @@ public class CubosComplianceApiService(ICubosComplianceApiRequest api, IUnitOfWo
     {
         try
         {
-            var jsonReturn = await api.AuthToken(externalAuthentication.AuthCode);
+            var jsonAuthRequestToken = new JsonAuthRequestToken { AuthCode = externalAuthentication.AuthCode };
+            var jsonReturn = await api.AuthToken(jsonAuthRequestToken);
 
             var data = (jsonReturn.Success.HasValue && jsonReturn.Success.Value
-                ? new JsonAuthToken
+                ? new JsonAuthResponseToken
                 {
-                    IdToken = jsonReturn.Data.idToken,
-                    AccessToken = jsonReturn.Data.accessToken,
-                    RefreshToken = jsonReturn.Data.refreshToken
+                    IdToken = jsonReturn.Data.GetProperty("idToken").GetString(),
+                    AccessToken = jsonReturn.Data.GetProperty("accessToken").GetString(),
+                    RefreshToken = jsonReturn.Data.GetProperty("refreshToken").GetString()
                 }
                 : null) ?? throw new ArgumentException(jsonReturn.Error, nameof(AuthToken));
 
@@ -63,10 +70,11 @@ public class CubosComplianceApiService(ICubosComplianceApiRequest api, IUnitOfWo
     {
         try
         {
-            var jsonReturn = await api.AuthRefresh(externalAuthenticationToken.ExternalAccessToken, externalAuthenticationToken.ExternalRefreshToken);
+            var jsonAuthRefreshRequest = new JsonAuthRefreshRequest { RefreshToken = externalAuthenticationToken.ExternalRefreshToken };
+            var jsonReturn = await api.AuthRefresh("Bearer " + externalAuthenticationToken.ExternalAccessToken, jsonAuthRefreshRequest);
 
             string accessToken = jsonReturn.Success.HasValue && jsonReturn.Success.Value
-                ? jsonReturn.Data.AccessToken : null;
+                ? jsonReturn.Data.GetProperty("accessToken").GetString() : null;
 
             if (string.IsNullOrWhiteSpace(accessToken))
                 throw new ArgumentException(jsonReturn.Error, nameof(AuthRefresh));
@@ -85,12 +93,14 @@ public class CubosComplianceApiService(ICubosComplianceApiRequest api, IUnitOfWo
     {
         try
         {
-            var jsonReturn = await api.CpfValidate(externalAuthenticationToken.ExternalAccessToken, socialNumber);
+            var jsonDocumentValidate = new JsonDocumentValitate { Document = socialNumber };
+            var jsonReturn = await api.CpfValidate("Bearer " + externalAuthenticationToken.ExternalAccessToken, jsonDocumentValidate);
 
-            bool? status = (jsonReturn.Success.HasValue && jsonReturn.Success.Value
-                ? jsonReturn.Data.Status : null) ?? throw new ArgumentException(jsonReturn.Error, nameof(CpfValidate));
+            int? statusNum = (jsonReturn.Success.HasValue && jsonReturn.Success.Value
+                ? jsonReturn.Data.Status : null)
+                ?? throw new ArgumentException(jsonReturn.Error, nameof(CpfValidate));
 
-            return status.Value;
+            return statusNum.Value == 1;
         }
         catch { throw; }
     }
@@ -99,13 +109,14 @@ public class CubosComplianceApiService(ICubosComplianceApiRequest api, IUnitOfWo
     {
         try
         {
-            var jsonReturn = await api.CnpjValidate(externalAuthenticationToken.ExternalAccessToken, taxNumber);
+            var jsonDocumentValidate = new JsonDocumentValitate { Document = taxNumber };
+            var jsonReturn = await api.CnpjValidate("Bearer " + externalAuthenticationToken.ExternalAccessToken, jsonDocumentValidate);
 
-            bool? status = (jsonReturn.Success.HasValue && jsonReturn.Success.Value
+            int? statusNum = (jsonReturn.Success.HasValue && jsonReturn.Success.Value
                 ? jsonReturn.Data.Status : null)
                 ?? throw new ArgumentException(jsonReturn.Error, nameof(CnpjValidate));
 
-            return status.Value;
+            return statusNum.Value == 1;
         }
         catch { throw; }
     }

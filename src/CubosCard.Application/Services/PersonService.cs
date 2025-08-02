@@ -148,7 +148,17 @@ public class PersonService(
                 externalAuthenticationToken = await _cubosComplianceApiService.AuthToken(externalAuthentication);
             }
             else
-                externalAuthenticationToken = await _cubosComplianceApiService.AuthRefresh(externalAuthenticationToken);
+            {
+                try
+                {
+                    externalAuthenticationToken = await _cubosComplianceApiService.AuthRefresh(externalAuthenticationToken);
+                }
+                catch
+                {
+                    externalAuthentication = await _cubosComplianceApiService.AuthCode(externalAuthentication);
+                    externalAuthenticationToken = await _cubosComplianceApiService.AuthToken(externalAuthentication);
+                }
+            }
 
             return document.Length == 11
                 ? await _cubosComplianceApiService.CpfValidate(externalAuthenticationToken, document)
