@@ -15,13 +15,7 @@ public class AuthTokenService : IAuthTokenService
 
     public async Task<bool> ValidateTokenAsync(string token)
     {
-        try
-        {
-            return await _authTokenRepository.IsTokenValidAsync(token);
-        }
-        catch
-        {
-            throw;
-        }
+        try { return await _authTokenRepository.IsTokenValidAsync(token); }
+        catch { throw; }
     }
 }

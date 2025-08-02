@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CubosCard.API.Controllers.V1;
 
+[ApiController]
 public class AccountsController(
     IAccountService accountService,
     ICardService cardService,
@@ -17,7 +18,7 @@ public class AccountsController(
     private readonly ITransactionService _transactionService = transactionService;
 
     [Authorize]
-    [HttpPost("/")]
+    [HttpPost]
     public async Task<ActionResult<AccountResponse>> CreateAccount(AccountRequest jsonLoginRequest)
     {
         try
@@ -28,14 +29,11 @@ public class AccountsController(
                 ? Ok(accountResponse)
                 : BadRequest(new { Message = "Account solicitation has failed!" });
         }
-        catch (Exception ex)
-        {
-            return BadRequest(new { ex.Message });
-        }
+        catch (Exception ex) { return BadRequest(new { ex.Message }); }
     }
 
     [Authorize]
-    [HttpGet("/")]
+    [HttpGet]
     public async Task<ActionResult<List<AccountResponse>>> GetAccounts()
     {
         try
@@ -48,15 +46,11 @@ public class AccountsController(
                 ? Ok(accountResponse)
                 : NotFound(new { Message = "No accounts are found!" });
         }
-        catch (Exception ex)
-        {
-            BadRequest(new { ex.Message });
-        }
-        return Ok();
+        catch (Exception ex) { return BadRequest(new { ex.Message }); }
     }
 
     [Authorize]
-    [HttpPost("/{accountId:guid}/cards")]
+    [HttpPost("{accountId:guid}/cards")]
     public async Task<ActionResult<CardResponse>> CreateCard([FromRoute] Guid accountId, [FromBody] CardRequest cardRequest)
     {
         try
@@ -67,21 +61,26 @@ public class AccountsController(
                 ? Ok(cardResponse)
                 : BadRequest(new { Message = "It was not possible to create a card for this account" });
         }
-        catch (Exception ex)
-        {
-            return BadRequest(new { ex.Message });
-        }
+        catch (Exception ex) { return BadRequest(new { ex.Message }); }
     }
 
     [Authorize]
-    [HttpGet("/{accountId:guid}/cards")]
-    public async Task<ActionResult<TransactionResponse>> GetCards(Guid accountId, [FromBody] TransactionRequest cardRequest)
+    [HttpGet("{accountId:guid}/cards")]
+    public async Task<ActionResult<List<CardResponse>>> GetCards(Guid accountId, [FromBody] TransactionRequest cardRequest)
     {
-        return Ok();
+        try
+        {
+            var cardResponseList = await _cardService.GetByAccountId(accountId);
+
+            return cardResponseList is not null && cardResponseList.Count != 0
+                ? Ok(cardResponseList)
+                : BadRequest("The transaction could not be created!");
+        }
+        catch (Exception ex) { return BadRequest(new { ex.Message }); }
     }
 
     [Authorize]
-    [HttpPost("/{accountId:guid}/transactions")]
+    [HttpPost("{accountId:guid}/transactions")]
     public async Task<ActionResult<TransactionResponse>> CreateTransaction(Guid accountId, [FromBody] TransactionRequest transactionRequest)
     {
         try
@@ -92,14 +91,11 @@ public class AccountsController(
                 ? Ok(transactionResponse)
                 : BadRequest("The transaction could not be created!");
         }
-        catch (Exception ex)
-        {
-            return BadRequest(new { ex.Message });
-        }
+        catch (Exception ex) { return BadRequest(new { ex.Message }); }
     }
 
     [Authorize]
-    [HttpPost("/{accountId:guid}/transactions/internal")]
+    [HttpPost("{accountId:guid}/transactions/internal")]
     public async Task<ActionResult<TransactionResponse>> CreateInternalTransaction(Guid accountId, [FromBody] InternalTransactionRequest transactionRequest)
     {
         try
@@ -110,14 +106,11 @@ public class AccountsController(
                 ? Ok(transactionResponse)
                 : BadRequest(new { Message = "The internal transaction could not be created!" });
         }
-        catch (Exception ex)
-        {
-            return BadRequest(new { ex.Message });
-        }
+        catch (Exception ex) { return BadRequest(new { ex.Message }); }
     }
 
     [Authorize]
-    [HttpGet("/{accountId:guid}/transactions")]
+    [HttpGet("{accountId:guid}/transactions")]
     public async Task<ActionResult<QueryCardsResponse>> GetTransactionList(
         Guid accountId,
         [FromQuery] int? itemsPerPage,
@@ -125,20 +118,28 @@ public class AccountsController(
         [FromQuery] string? typeTransaction
     )
     {
-        int pageSize = itemsPerPage ?? 10;
-        int pageIndex = currentPage ?? 1;
-        TransactionType? type = typeTransaction.ToLower() switch
+        try
         {
-            "credit" => TransactionType.Credit,
-            "debit" => TransactionType.Debit,
-            _ => null
-        };
+            int pageSize = itemsPerPage ?? 10;
+            int pageIndex = currentPage ?? 1;
+            TransactionType? type = typeTransaction.ToLower() switch
+            {
+                "credit" => TransactionType.Credit,
+                "debit" => TransactionType.Debit,
+                _ => null
+            };
 
-        return Ok();
+            var transactionsPaginated = await _transactionService.GetByPagination(accountId, pageSize, pageIndex, type);
+
+            return transactionsPaginated is not null && transactionsPaginated.Transactions.Count() != 0
+                ? Ok(transactionsPaginated)
+                : NotFound(new { Message = "We were unable to find cards with these specifications!" });
+        }
+        catch (Exception ex) { return BadRequest(new { ex.Message }); }
     }
 
     [Authorize]
-    [HttpGet("/{accountId:guid}/balance")]
+    [HttpGet("{accountId:guid}/balance")]
     public async Task<ActionResult<BalanceResponse>> GetAccountBalance(Guid accountId)
     {
         try
@@ -149,9 +150,6 @@ public class AccountsController(
                 ? Ok(balanceResponse)
                 : BadRequest(new { Message = "Não foi possível obter o valor da conta!" });
         }
-        catch (Exception ex)
-        {
-            return BadRequest(new { ex.Message });
-        }
+        catch (Exception ex) { return BadRequest(new { ex.Message }); }
     }
 }

@@ -28,7 +28,7 @@ public class CardService : ICardService
         try
         {
             var account = await _accountRepository.GetById(accountId) ??
-                throw new ArgumentException("Person not found", nameof(accountId));
+                throw new ArgumentException("Account not found", nameof(accountId));
 
             var existsCard = model.Type == CardType.Physical
                 ? await _cardRepository.GetByAccountAndType(accountId, CardType.Physical)
@@ -57,10 +57,7 @@ public class CardService : ICardService
                 UpdatedAt = account.UpdatedAt
             };
         }
-        catch
-        {
-            throw;
-        }
+        catch { throw; }
     }
 
     public async Task<QueryCardsResponse> GetCardListAsync(QueryCardRequest model)
@@ -68,9 +65,10 @@ public class CardService : ICardService
         try
         {
             var cards = await _cardRepository.GetByPagination(model.PersonId, model.ItemsPerPage, model.CurrentPage);
-            return new QueryCardsResponse
+
+            return new QueryCardsResponse()
             {
-                Cards = cards.Select(
+                Cards = cards.Items.Select(
                 card => new CardResponse
                 {
                     Id = card.Id,
@@ -79,8 +77,37 @@ public class CardService : ICardService
                     CVV = card.CVV,
                     CreatedAt = card.CreatedAt,
                     UpdatedAt = card.UpdatedAt
-                })
+                }),
+                Pagination = {
+                    ItemsPerPage = cards.PageSize,
+                    CurrentPage = cards.PageIndex,
+                    TotalItems = cards.Items.Count,
+                    TotalPages = cards.TotalPages
+                }
             };
+        }
+        catch { throw; }
+    }
+
+    public async Task<List<CardResponse>> GetByAccountId(Guid accountId)
+    {
+        try
+        {
+            var account = await _accountRepository.GetById(accountId)
+                ?? throw new ArgumentException("Account not found", nameof(accountId));
+
+            var cards = await _cardRepository.GetByAccountId(account.Id);
+
+            return [.. cards.Select(
+                card => new CardResponse
+                {
+                    Id = card.Id,
+                    Type = card.CardType.ToString().ToLower(),
+                    Number = Utils.CreateCardMask(card.Number),
+                    CVV = card.CVV,
+                    CreatedAt = card.CreatedAt,
+                    UpdatedAt = card.UpdatedAt
+                })];
         }
         catch { throw; }
     }

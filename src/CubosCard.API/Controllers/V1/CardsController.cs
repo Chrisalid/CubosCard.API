@@ -4,11 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CubosCard.API.Controllers.V1;
 
+[ApiController]
 public class CardsController(ICardService cardService) : BaseController
 {
     private readonly ICardService _cardService = cardService;
 
-    [HttpGet("/")]
+    [HttpGet]
     public async Task<ActionResult<QueryCardsResponse>> GetCardList([FromQuery] int? itemsPerPage, [FromQuery] int? currentPage)
     {
         try

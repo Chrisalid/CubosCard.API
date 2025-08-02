@@ -1,4 +1,3 @@
-using CubosCard.Domain.Entities;
 using CubosCard.Domain.Enums;
 
 namespace CubosCard.Application.DTOs;
@@ -6,6 +5,8 @@ namespace CubosCard.Application.DTOs;
 public class QueryCardsResponse
 {
     public IEnumerable<CardResponse> Cards { get; set; }
+
+    public Pagination Pagination { get; set; }
 }
 
 public class QueryCardRequest

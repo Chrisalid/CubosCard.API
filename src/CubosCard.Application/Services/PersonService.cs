@@ -53,13 +53,11 @@ public class PersonService : IPersonService
             {
                 Id = person.Id,
                 Name = person.Name,
-                Document = person.Document
+                Document = person.Document,
+                Password = model.Password
             };
         }
-        catch
-        {
-            throw;
-        }
+        catch { throw; }
     }
 
     public async Task<LoginResponse?> LoginAsync(LoginRequest model)
@@ -93,10 +91,7 @@ public class PersonService : IPersonService
 
             return loginResponse;
         }
-        catch
-        {
-            throw;
-        }
+        catch { throw; }
     }
 
     public string GenerateJwtToken(Person person, out DateTime expirationDate)
@@ -125,9 +120,6 @@ public class PersonService : IPersonService
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
-        catch
-        {
-            throw;
-        }
+        catch { throw; }
     }
 }

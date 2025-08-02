@@ -45,10 +45,7 @@ public class AccountService : IAccountService
                     UpdatedAt = account.UpdatedAt
                 })];
         }
-        catch
-        {
-            throw;
-        }
+        catch { throw; }
     }
 
     public async Task<AccountResponse> CreateAsync(AccountRequest model)
@@ -82,17 +79,18 @@ public class AccountService : IAccountService
                 UpdatedAt = account.UpdatedAt
             };
         }
-        catch
-        {
-            throw;
-        }
+        catch { throw; }
     }
 
     public async Task<BalanceResponse> GetBalanceResponseAsync(Guid accountId)
     {
-        var account = await _accountRepository.GetById(accountId)
-            ?? throw new ArgumentException("Account not found!", nameof(accountId));
+        try
+        {
+            var account = await _accountRepository.GetById(accountId)
+                ?? throw new ArgumentException("Account not found!", nameof(accountId));
 
-        return new BalanceResponse { Balance = account.Amount };
+            return new BalanceResponse { Balance = account.Amount };
+        }
+        catch { throw; }
     }
 }

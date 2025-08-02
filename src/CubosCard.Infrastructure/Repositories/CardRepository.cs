@@ -1,3 +1,4 @@
+using CubosCard.Domain.DTOs;
 using CubosCard.Domain.Entities;
 using CubosCard.Domain.Enums;
 using CubosCard.Domain.Interfaces.Repositories;
@@ -22,12 +23,27 @@ public class CardRepository(ApplicationDbContext context) : UnitOfWorkRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task<ICollection<Card>> GetByPagination(Guid personId, int pageSize, int pageIndex)
+    public async Task<PagedResult<Card>> GetByPagination(Guid personId, int pageSize, int pageIndex)
     {
-        return await _dbContext.Set<Card>()
-            .Where(_ => _.Account.PersonId == personId)
+        var query = _dbContext.Set<Card>()
+            .Include(t => t.Account)
+            .Where(_ => _.Account.PersonId == personId);
+
+        var totalItems = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+        var pagedResults = await query
             .Skip((pageIndex - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
+
+        return  new PagedResult<Card>
+        {
+            TotalItems = totalItems,
+            TotalPages = totalPages,
+            PageIndex = pageIndex,
+            PageSize = pageSize,
+            Items = pagedResults
+        };
     }
 }

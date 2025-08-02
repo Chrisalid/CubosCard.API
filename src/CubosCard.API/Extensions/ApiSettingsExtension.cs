@@ -28,7 +28,7 @@ public static class ApiSettingsExtension
                 p.SubstituteApiVersionInUrl = true;
             }).AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "TesteApi", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CubosCard API", Version = "v1" });
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {

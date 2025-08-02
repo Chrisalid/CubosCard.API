@@ -5,18 +5,16 @@ using static CubosCard.Domain.Entities.Person;
 
 namespace CubosCard.API.Controllers;
 
+[ApiController]
 public class PeoplesController(IPersonService personService) : BaseController
 {
     private readonly IPersonService _personService = personService;
 
-    [HttpPost("/")]
+    [HttpPost]
     public async Task<ActionResult<PersonResponse>> CreatePerson(PersonRequest jsonCreatePersonRequest)
     {
         try
         {
-            if (TryValidateModel(jsonCreatePersonRequest))
-                throw new ArgumentException("Model is invalid check Model Parameter's", nameof(PersonRequest));
-
             var personModel = new PersonModel(
                 jsonCreatePersonRequest.Name,
                 jsonCreatePersonRequest.Document,
@@ -27,7 +25,7 @@ public class PeoplesController(IPersonService personService) : BaseController
 
             return personResponse is not null
                 ? Ok(personResponse)
-                : BadRequest(new { Message = "" });
+                : BadRequest(new { Message = "Unable to create person!" });
         }
         catch (Exception ex)
         {

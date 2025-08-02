@@ -58,10 +58,7 @@ public class TransactionService : ITransactionService
                 UpdatedAt = transaction.UpdatedAt
             };
         }
-        catch
-        {
-            throw;
-        }
+        catch { throw; }
     }
 
     public async Task<TransactionResponse> CreateInternalTransactionAsync(Guid accountId, InternalTransactionRequest internalTransactionRequest)
@@ -112,9 +109,37 @@ public class TransactionService : ITransactionService
                 UpdatedAt = transaction.UpdatedAt
             };
         }
-        catch
+        catch { throw; }
+    }
+
+    public async Task<QueryTransactionsResponse> GetByPagination(Guid accountId, int pageSize, int pageIndex, TransactionType? type)
+    {
+        try
         {
-            throw;
+            var account = await _accountRepository.GetById(accountId)
+                ?? throw new ArgumentException("Account not Found!", nameof(accountId));
+
+            var transactions = await _transactionRepository.GetByPagination(account.Id, pageSize, pageIndex, type);
+
+            return new QueryTransactionsResponse()
+            {
+                Transactions = transactions.Items.Select(
+                transaction => new TransactionResponse
+                {
+                    Id = transaction.Id,
+                    Value = transaction.Value,
+                    Description = transaction.Description,
+                    CreatedAt = transaction.CreatedAt,
+                    UpdatedAt = transaction.UpdatedAt
+                }),
+                Pagination = {
+                    ItemsPerPage = transactions.PageSize,
+                    CurrentPage = transactions.PageIndex,
+                    TotalItems = transactions.Items.Count,
+                    TotalPages = transactions.TotalPages
+                }
+            };
         }
+        catch { throw; }
     }
 }

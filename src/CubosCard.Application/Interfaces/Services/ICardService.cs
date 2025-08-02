@@ -6,4 +6,5 @@ public interface ICardService
 {
     Task<CardResponse> CreateAsync(Guid accountId, CardRequest model);
     Task<QueryCardsResponse> GetCardListAsync(QueryCardRequest model);
+    Task<List<CardResponse>> GetByAccountId(Guid accountId);
 }

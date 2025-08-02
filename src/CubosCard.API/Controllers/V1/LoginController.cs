@@ -4,11 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CubosCard.API.Controllers.V1;
 
+[ApiController]
 public class LoginController(IPersonService personService) : BaseController
 {
     private readonly IPersonService _personService = personService;
 
-    [HttpPost("/")]
+    [HttpPost]
     public async Task<ActionResult<LoginResponse>> LoginPerson(LoginRequest jsonLoginRequest)
     {
         try
