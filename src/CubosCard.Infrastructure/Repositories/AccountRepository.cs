@@ -7,6 +7,12 @@ namespace CubosCard.Infrastructure.Repositories;
 
 public class AccountRepository(ApplicationDbContext context) : UnitOfWorkRepository(context), IAccountRepository
 {
+    public async Task<Account> GetById(Guid accountId)
+    {
+        return await _dbContext.Set<Account>()
+            .Where(_ => _.Id == accountId)
+                .FirstOrDefaultAsync();
+    }
     public async Task<ICollection<Account>> GetByPersonId(Guid personId)
     {
         return await _dbContext.Set<Account>()

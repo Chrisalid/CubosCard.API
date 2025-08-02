@@ -2,15 +2,15 @@ namespace CubosCard.Domain.Entities;
 
 public class Account : BaseEntity
 {
-    public Guid Id { get; private set; }
+    public Guid Id { get; set; }
 
-    public Guid PersonId { get; private set; }
+    public Guid PersonId { get; set; }
 
-    public string Branch { get; private set; }
+    public string Branch { get; set; }
 
-    public string AccountNumber { get; private set; }
+    public string AccountNumber { get; set; }
 
-    public decimal Amount { get; private set; }
+    public decimal Amount { get; set; }
 
     public virtual Person Person { get; set; }
 

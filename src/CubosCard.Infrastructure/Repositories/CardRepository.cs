@@ -1,4 +1,5 @@
 using CubosCard.Domain.Entities;
+using CubosCard.Domain.Enums;
 using CubosCard.Domain.Interfaces.Repositories;
 using CubosCard.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,13 @@ public class CardRepository(ApplicationDbContext context) : UnitOfWorkRepository
         return await _dbContext.Set<Card>()
             .Where(_ => _.AccountId == accountId)
             .ToListAsync();
+    }
+
+    public async Task<Card?> GetByAccountAndType(Guid accountId, CardType cardType)
+    {
+        return await _dbContext.Set<Card>()
+            .Where(_ => _.AccountId == accountId && _.CardType == cardType)
+            .FirstOrDefaultAsync();
     }
 
     public async Task<ICollection<Card>> GetByPagination(Guid personId, int pageSize, int pageIndex)

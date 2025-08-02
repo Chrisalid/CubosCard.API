@@ -35,7 +35,7 @@ public class PersonService : IPersonService
             if (string.IsNullOrWhiteSpace(model.Document))
                 throw new ArgumentException("Document cannot be null or empty.", nameof(PersonModel));
 
-            var document = Utils.NormalizeStringDocument(model.Document);
+            var document = Utils.NormalizeString(model.Document);
 
             var existingPerson = await _personRepository.GetByDocument(document);
             if (existingPerson != null)
@@ -69,7 +69,7 @@ public class PersonService : IPersonService
             if (string.IsNullOrWhiteSpace(model.Document))
                 throw new ArgumentException("Document cannot be null or empty.", nameof(PersonModel));
 
-            var document = Utils.NormalizeStringDocument(model.Document);
+            var document = Utils.NormalizeString(model.Document);
 
             var person = await _personRepository.GetByDocument(document);
             if (person is null || !BCrypt.Net.BCrypt.Verify(model.Password, person.Password))

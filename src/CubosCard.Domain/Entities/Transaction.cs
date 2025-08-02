@@ -1,3 +1,5 @@
+using CubosCard.Domain.Enums;
+
 namespace CubosCard.Domain.Entities;
 
 public class Transaction : BaseEntity
@@ -6,9 +8,12 @@ public class Transaction : BaseEntity
 
     public Guid AccountId { get; set; }
 
+    public TransactionType Type { get; set; }
+
     public decimal Value { get; set; }
 
     public string Description { get; set; }
+
     public virtual Account Account { get; set; }
 
     public static Transaction Create(TransactionModel model)
@@ -20,6 +25,7 @@ public class Transaction : BaseEntity
             transaction.SetAccountId(model.AccountId);
             transaction.SetValue(model.Value);
             transaction.SetDescription(model.Description);
+            transaction.SetTransactionType(model.Type);
             transaction.SetCreated(DateTime.Now);
             transaction.SetUpdated(DateTime.Now);
 
@@ -55,10 +61,19 @@ public class Transaction : BaseEntity
         AccountId = accountId;
     }
 
+    private void SetTransactionType(TransactionType type)
+    {
+        if (Enum.IsDefined(type))
+            throw new ArgumentException("TransactionType cannot be empty.", nameof(type));
+
+        Type = type;
+    }
+
     public record TransactionModel
     (
         Guid AccountId,
         decimal Value,
-        string Description
+        string Description,
+        TransactionType Type
     );
 }

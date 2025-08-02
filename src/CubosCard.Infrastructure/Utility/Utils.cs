@@ -5,7 +5,7 @@ namespace CubosCard.Infrastructure.Utility;
 
 public static class Utils
 {
-    public static string NormalizeStringDocument(string document)
+    public static string NormalizeString(string document)
     {
         if (string.IsNullOrWhiteSpace(document))
             throw new ArgumentException("Document cannot be null or empty.", nameof(document));
@@ -29,5 +29,10 @@ public static class Utils
         var regexPattern = new Regex(@"^\d{7}-\d{1}$");
 
         return regexPattern.IsMatch(accountNumber);
+    }
+
+    public static string GetLastFourDigits(string input)
+    {
+        return input[^4..];
     }
 }

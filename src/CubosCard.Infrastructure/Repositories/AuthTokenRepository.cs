@@ -13,4 +13,15 @@ public class AuthTokenRepository(ApplicationDbContext context) : UnitOfWorkRepos
             .Where(_ => _.PersonId == personId && _.ExpiresAt <= DateTime.Now)
             .FirstOrDefaultAsync();
     }
+
+    public async Task<bool> IsTokenValidAsync(string token)
+    {
+        var authToken = await _dbContext.AuthToken
+            .FirstOrDefaultAsync(t => t.Token == token);
+
+        if (authToken == null || authToken.ExpiresAt < DateTime.UtcNow)
+            return false;
+
+        return true;
+    }
 }

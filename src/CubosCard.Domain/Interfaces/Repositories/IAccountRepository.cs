@@ -4,6 +4,7 @@ namespace CubosCard.Domain.Interfaces.Repositories;
 
 public interface IAccountRepository : IUnitOfWorkRepository
 {
+    Task<Account> GetById(Guid accountId);
     Task<decimal> GetBalance(Guid accountId);
     Task<ICollection<Account>> GetByPersonId(Guid personId);
 }

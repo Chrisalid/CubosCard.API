@@ -10,20 +10,23 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
     {
         builder.ToTable("Transaction");
 
-        builder.HasKey(c => c.Id);
+        builder.HasKey(t => t.Id);
 
-        builder.Property(c => c.AccountId)
+        builder.Property(t => t.AccountId)
             .IsRequired();
 
-        builder.Property(c => c.Value)
+        builder.Property(t => t.Type)
             .IsRequired();
 
-        builder.Property(c => c.Description)
+        builder.Property(t => t.Value)
             .IsRequired();
 
-        builder.HasOne(c => c.Account)
-            .WithMany(p => p.Transactions)
-            .HasForeignKey(a => a.AccountId);
+        builder.Property(t => t.Description)
+            .IsRequired();
+
+        builder.HasOne(t => t.Account)
+            .WithMany(a => a.Transactions)
+            .HasForeignKey(t => t.AccountId);
 
         builder.SetPropertyCommums();
     }

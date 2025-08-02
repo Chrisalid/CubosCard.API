@@ -1,3 +1,4 @@
+using System.Linq;
 using CubosCard.Application.DTOs;
 using CubosCard.Application.Interfaces.Services;
 using CubosCard.Domain.Entities;
@@ -23,6 +24,31 @@ public class AccountService : IAccountService
         _accountRepository = accountRepository;
         _personRepository = personRepository;
         _configuration = configuration;
+    }
+
+    public async Task<List<AccountResponse>> GetByPersonIdAsync(Guid personId)
+    {
+        try
+        {
+            var person = await _personRepository.GetById(personId)
+                ?? throw new ArgumentException("Person not Found", nameof(personId));
+
+            var accounts = await _accountRepository.GetByPersonId(personId);
+
+            return [.. accounts.Select(
+                account => new AccountResponse
+                {
+                    Id = account.Id,
+                    Branch = account.Branch,
+                    Account = account.AccountNumber,
+                    CreatedAt = account.CreatedAt,
+                    UpdatedAt = account.UpdatedAt
+                })];
+        }
+        catch
+        {
+            throw;
+        }
     }
 
     public async Task<AccountResponse> CreateAsync(AccountRequest model)
@@ -60,5 +86,13 @@ public class AccountService : IAccountService
         {
             throw;
         }
+    }
+
+    public async Task<BalanceResponse> GetBalanceResponseAsync(Guid accountId)
+    {
+        var account = await _accountRepository.GetById(accountId)
+            ?? throw new ArgumentException("Account not found!", nameof(accountId));
+
+        return new BalanceResponse { Balance = account.Amount };
     }
 }

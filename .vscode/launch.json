@@ -1,0 +1,55 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "CubosCard.Api - Development (with Swagger)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-api",
+            "program": "${workspaceFolder}/src/CubosCard.Api/bin/Debug/net8.0/CubosCard.Api.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/CubosCard.Api",
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "ASPNETCORE_URLS": "https://localhost:7000;http://localhost:5000"
+            },
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://localhost:\\d+)",
+                "uriFormat": "%s/swagger"
+            }
+        },
+        {
+            "name": "CubosCard.Api - Development (Debug Mode)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-api",
+            "program": "${workspaceFolder}/src/CubosCard.Api/bin/Debug/net8.0/CubosCard.Api.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/CubosCard.Api",
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "ASPNETCORE_URLS": "https://localhost:7000;http://localhost:5000"
+            }
+        },
+        {
+            "name": "CubosCard.Api - Production",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-api",
+            "program": "${workspaceFolder}/src/CubosCard.Api/bin/Debug/net8.0/CubosCard.Api.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/CubosCard.Api",
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Production",
+                "ASPNETCORE_URLS": "https://localhost:7000;http://localhost:5000"
+            }
+        }
+    ]
+}

@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json.Serialization;
 using CubosCard.Domain.Enums;
 
 namespace CubosCard.Application.DTOs;
@@ -26,6 +27,7 @@ public class AccountResponse
 
 public class CardRequest
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public CardType Type { get; set; }
 
     public string Number { get; set; }
@@ -33,9 +35,15 @@ public class CardRequest
     public string CVV { get; set; }
 }
 
-public class CardResponse : CardRequest
+public class CardResponse
 {
     public Guid Id { get; set; }
+
+    public string Number { get; set; }
+
+    public string CVV { get; set; }
+
+    public string Type { get; set; }
 
     public DateTime CreatedAt { get; set; }
 

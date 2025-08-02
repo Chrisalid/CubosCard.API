@@ -1,0 +1,141 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "build-api",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"build",
+				"src/CubosCard.Api/CubosCard.Api.csproj",
+				"/property:GenerateFullPaths=true",
+				"/consoleloggerparameters:NoSummary"
+			],
+			"group": "build",
+			"presentation": {
+				"reveal": "silent"
+			},
+			"problemMatcher": "$msCompile"
+		},
+		{
+			"label": "Build API",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"build",
+				"src/CubosCard.Api/CubosCard.Api.csproj"
+			],
+			"group": "build",
+			"isBackground": false,
+			"problemMatcher": [
+				"$msCompile"
+			]
+		},
+		{
+			"label": "Run API",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"run",
+				"--project",
+				"src/CubosCard.Api/CubosCard.Api.csproj"
+			],
+			"group": "test",
+			"isBackground": true,
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "new"
+			}
+		},
+		{
+			"label": "Watch API",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"watch",
+				"run",
+				"--project",
+				"src/CubosCard.Api/CubosCard.Api.csproj"
+			],
+			"group": "test",
+			"isBackground": true,
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "new"
+			}
+		},
+		{
+			"label": "Create Migration",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"ef",
+				"migrations",
+				"add",
+				"${input:migrationName}",
+				"--project",
+				"CubosCard.Api.Infrastructure",
+				"--startup-project",
+				"CubosCard.Api"
+			],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "new"
+			}
+		},
+		{
+			"label": "Update Database",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"ef",
+				"database",
+				"update",
+				"--project",
+				"CubosCard.Api.Infrastructure",
+				"--startup-project",
+				"CubosCard.Api"
+			],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "new"
+			}
+		},
+		{
+			"label": "Clean",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"clean",
+				"src/CubosCard.Api/CubosCard.Api.csproj"
+			],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "new"
+			}
+		}
+	],
+	"inputs": [
+		{
+			"id": "migrationName",
+			"description": "Nome da Migration",
+			"default": "NewMigration",
+			"type": "promptString"
+		}
+	]
+}

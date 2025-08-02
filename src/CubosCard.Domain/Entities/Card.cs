@@ -58,7 +58,7 @@ public class Card : BaseEntity
 
     private void SetCardType(CardType cardType)
     {
-        if (!Enum.IsDefined<CardType>(cardType))
+        if (!Enum.IsDefined(cardType))
             throw new ArgumentException("Invalid card type.", nameof(cardType));
 
         CardType = cardType;
