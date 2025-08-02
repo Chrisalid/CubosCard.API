@@ -12,6 +12,7 @@ public class ExternalAuthenticationTokenRepository(ApplicationDbContext context)
         return await _dbContext.Set<ExternalAuthenticationToken>()
             .Include(x => x.ExternalAuthentication)
             .Where(x => x.ExternalAuthentication.Id == externalAuthenticationId)
-            .LastOrDefaultAsync();
+            .OrderByDescending(x => x.Id)
+            .FirstOrDefaultAsync();
     }
 }
