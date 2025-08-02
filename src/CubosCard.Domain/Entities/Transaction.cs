@@ -39,8 +39,8 @@ public class Transaction : BaseEntity
 
     private void SetValue(decimal value)
     {
-        if (value <= 0)
-            throw new ArgumentException("Value must be grater than zero.", nameof(value));
+        if (value == 0)
+            throw new ArgumentException("Value must be different than zero.", nameof(value));
 
         Value = value;
     }
@@ -63,7 +63,7 @@ public class Transaction : BaseEntity
 
     private void SetTransactionType(TransactionType type)
     {
-        if (Enum.IsDefined(type))
+        if (!Enum.IsDefined(type))
             throw new ArgumentException("TransactionType cannot be empty.", nameof(type));
 
         Type = type;

@@ -14,9 +14,10 @@ public class JwtMiddleware(RequestDelegate next, IConfiguration configuration)
 
     public async Task InvokeAsync(HttpContext context, IAuthTokenService authTokenService)
     {
-        var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+        var authorization = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ");
+        var token = authorization?.Last();
 
-        if (token != null)
+        if (token != null && authorization.First().Contains("Bearer"))
         {
             await AttachUserToContextAsync(context, authTokenService, token);
         }

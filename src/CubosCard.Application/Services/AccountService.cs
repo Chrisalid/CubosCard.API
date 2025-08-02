@@ -48,7 +48,7 @@ public class AccountService : IAccountService
         catch { throw; }
     }
 
-    public async Task<AccountResponse> CreateAsync(AccountRequest model)
+    public async Task<AccountResponse> CreateAsync(Guid personId, AccountRequest model)
     {
         try
         {
@@ -58,7 +58,7 @@ public class AccountService : IAccountService
             if (!Utils.IsValidAccountNumber(model.Account))
                 throw new ArgumentException("Account number does not match mask XXXXXXX-X.", nameof(AccountRequest));
 
-            var person = await _personRepository.GetById(model.PersonId) ??
+            var person = await _personRepository.GetById(personId) ??
                 throw new ArgumentException("Person not found", nameof(Person));
 
             var account = Create(new AccountModel(
@@ -72,7 +72,7 @@ public class AccountService : IAccountService
 
             return new AccountResponse
             {
-                Id = person.Id,
+                Id = account.Id,
                 Branch = account.Branch,
                 Account = account.AccountNumber,
                 CreatedAt = account.CreatedAt,

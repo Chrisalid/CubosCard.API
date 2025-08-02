@@ -1,5 +1,3 @@
-using CubosCard.Domain.Entities;
-
 namespace CubosCard.Application.DTOs;
 
 public class QueryTransactionsResponse

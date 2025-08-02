@@ -9,14 +9,17 @@ using Transaction = CubosCard.Domain.Entities.Transaction;
 
 namespace CubosCard.Application.Services;
 
+
 public class TransactionService : ITransactionService
 {
     private readonly ITransactionRepository _transactionRepository;
     private readonly IAccountRepository _accountRepository;
-
     private readonly IConfiguration _configuration;
 
-    public TransactionService(ITransactionRepository transactionRepository, IAccountRepository accountRepository, IConfiguration configuration)
+    public TransactionService(
+        ITransactionRepository transactionRepository,
+        IAccountRepository accountRepository,
+        IConfiguration configuration)
     {
         _transactionRepository = transactionRepository;
         _accountRepository = accountRepository;
@@ -83,8 +86,6 @@ public class TransactionService : ITransactionService
                 TransactionType.Debit
             ));
 
-            account.Amount -= value;
-
             var receiverTransaction = Create(new TransactionModel(
                 receiverAccount.Id,
                 value,
@@ -92,10 +93,14 @@ public class TransactionService : ITransactionService
                 TransactionType.Credit
             ));
 
-            receiverAccount.Amount += value;
-
             await _transactionRepository.Create(transaction);
             await _transactionRepository.Create(receiverTransaction);
+
+            account.Amount -= value;
+            account.UpdatedAt = DateTime.Now;
+
+            receiverAccount.Amount += value;
+            receiverAccount.UpdatedAt = DateTime.Now;
 
             await _accountRepository.Update(account);
             await _accountRepository.Update(receiverAccount);
@@ -132,7 +137,7 @@ public class TransactionService : ITransactionService
                     CreatedAt = transaction.CreatedAt,
                     UpdatedAt = transaction.UpdatedAt
                 }),
-                Pagination = {
+                Pagination = new Pagination {
                     ItemsPerPage = transactions.PageSize,
                     CurrentPage = transactions.PageIndex,
                     TotalItems = transactions.Items.Count,

@@ -6,7 +6,6 @@ namespace CubosCard.Application.DTOs;
 
 public class AccountRequest
 {
-    public Guid PersonId { get; set; }
     public string Branch { get; set; }
 
     public string Account { get; set; }

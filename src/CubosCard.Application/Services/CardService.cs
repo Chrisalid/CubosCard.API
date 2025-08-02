@@ -1,5 +1,6 @@
 using CubosCard.Application.DTOs;
 using CubosCard.Application.Interfaces.Services;
+using CubosCard.Domain.Entities;
 using CubosCard.Domain.Enums;
 using CubosCard.Domain.Interfaces.Repositories;
 using CubosCard.Infrastructure.Utility;
@@ -46,7 +47,7 @@ public class CardService : ICardService
                 model.Type
             ));
 
-            await _cardRepository.Create(account);
+            await _cardRepository.Create(card);
 
             return new CardResponse
             {
@@ -78,7 +79,7 @@ public class CardService : ICardService
                     CreatedAt = card.CreatedAt,
                     UpdatedAt = card.UpdatedAt
                 }),
-                Pagination = {
+                Pagination = new Pagination {
                     ItemsPerPage = cards.PageSize,
                     CurrentPage = cards.PageIndex,
                     TotalItems = cards.Items.Count,

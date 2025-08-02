@@ -23,8 +23,8 @@ public class AccountsController(
     {
         try
         {
-            jsonLoginRequest.PersonId = GetCurrentPersonId();
-            var accountResponse = await _accountService.CreateAsync(jsonLoginRequest);
+            var personId = GetCurrentPersonId();
+            var accountResponse = await _accountService.CreateAsync(personId, jsonLoginRequest);
             return accountResponse is not null
                 ? Ok(accountResponse)
                 : BadRequest(new { Message = "Account solicitation has failed!" });
@@ -66,7 +66,7 @@ public class AccountsController(
 
     [Authorize]
     [HttpGet("{accountId:guid}/cards")]
-    public async Task<ActionResult<List<CardResponse>>> GetCards(Guid accountId, [FromBody] TransactionRequest cardRequest)
+    public async Task<ActionResult<List<CardResponse>>> GetCards(Guid accountId)
     {
         try
         {
@@ -100,7 +100,7 @@ public class AccountsController(
     {
         try
         {
-            var transactionResponse = _transactionService.CreateInternalTransactionAsync(accountId, transactionRequest);
+            var transactionResponse = await _transactionService.CreateInternalTransactionAsync(accountId, transactionRequest);
 
             return transactionResponse is not null
                 ? Ok(transactionResponse)
@@ -122,12 +122,12 @@ public class AccountsController(
         {
             int pageSize = itemsPerPage ?? 10;
             int pageIndex = currentPage ?? 1;
-            TransactionType? type = typeTransaction.ToLower() switch
+            TransactionType? type = typeTransaction is not null ? typeTransaction.ToLower() switch
             {
                 "credit" => TransactionType.Credit,
                 "debit" => TransactionType.Debit,
                 _ => null
-            };
+            } : null;
 
             var transactionsPaginated = await _transactionService.GetByPagination(accountId, pageSize, pageIndex, type);
 

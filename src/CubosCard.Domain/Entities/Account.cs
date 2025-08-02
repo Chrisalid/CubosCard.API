@@ -49,6 +49,7 @@ public class Account : BaseEntity
     {
         if (string.IsNullOrWhiteSpace(accountNumber))
             throw new ArgumentException("AccountNumber cannot be null or empty.", nameof(accountNumber));
+
         AccountNumber = accountNumber;
     }
 
@@ -56,6 +57,8 @@ public class Account : BaseEntity
     {
         if (personId == Guid.Empty)
             throw new ArgumentException("PersonId cannot be empty.", nameof(personId));
+
+        PersonId = personId;
     }
 
     private void SetAmount(decimal amount)

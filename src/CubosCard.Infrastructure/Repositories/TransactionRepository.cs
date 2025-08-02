@@ -23,7 +23,7 @@ public class TransactionRepository(ApplicationDbContext context) : UnitOfWorkRep
             .Take(pageSize)
             .ToListAsync();
 
-        return  new PagedResult<Transaction>
+        return new PagedResult<Transaction>
         {
             TotalItems = totalItems,
             TotalPages = totalPages,
