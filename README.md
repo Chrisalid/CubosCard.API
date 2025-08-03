@@ -6,7 +6,7 @@ Este projeto é uma API desenvolvida em .NET para gerenciamento de cartões, con
 ## Pré-requisitos
 
 - [.NET SDK 6.0 ou superior](https://dotnet.microsoft.com/download)
-- Banco de dados SQL Server (ou outro compatível com EF Core)
+- Banco de dados PostgreSQL
 
 ## Estrutura do Projeto
 
@@ -28,13 +28,13 @@ Este projeto é uma API desenvolvida em .NET para gerenciamento de cartões, con
 2. **Compilar o projeto**
 
    ```pwsh
-   dotnet build src/CubosCard.Api/CubosCard.Api.csproj
+   dotnet build
    ```
 
 3. **Executar migrações do banco de dados**
 
    ```pwsh
-   dotnet ef database update --project CubosCard.Api.Infrastructure --startup-project CubosCard.Api
+   dotnet ef database update --project src/CubosCard.Infrastructure --startup-project src/CubosCard.Api
    ```
 
 4. **Executar a API**
@@ -53,14 +53,6 @@ Este projeto é uma API desenvolvida em .NET para gerenciamento de cartões, con
   ```pwsh
   dotnet watch run --project src/CubosCard.Api/CubosCard.Api.csproj
   ```
-
-## Testes
-
-Os testes podem ser adicionados em projetos separados. Para rodar testes, utilize:
-
-```pwsh
-dotnet test
-```
 
 ## Migrações
 
